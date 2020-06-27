@@ -1,2 +1,5 @@
 bugobot-env
 .env
+__pycache__
+*secret*
+.vscode
