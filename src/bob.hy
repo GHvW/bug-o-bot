@@ -1,24 +1,24 @@
-(import 
-    [discord]
-    [secrets [*]])
+(import discord)
 
-(setv discord-client (.Client discord))
+(import [secrets [token]])
 
-#@(client.event
-    ;; hy should transform on-ready to on_ready()
-    (defn/a on-ready [] 
-        (print f"We're in as {client.user}")))
+(setv client (.Client discord))
 
 #@(client.event
-    ;; hy should transform on-message to on_message(message)
-    (defn/a on-message 
-        [message]
-        (if-not (== (.author message) (.user client))
-            (if (-> message
-                    (.content)
-                    (.startswith "hey bug-o-bot"))
-                (await (-> message
-                           (.channel)
-                           (.send "uh.. hey")))))))
+  ;; hy should transform on-ready to on_ready()
+  (defn/a on-ready [] 
+    (print f"We're in as {client.user}")))
 
-(.run discord-client token)
+#@(client.event
+  ;; hy should transform on-message to on_message(message)
+  (defn/a on-message 
+    [message]
+    (if-not (= (. message author) (. client user))
+      (if (-> message
+              (. content)
+              (.startswith "hey bug-o-bot"))
+        (await (-> message
+                   (. channel)
+                   (.send "uh.. hey")))))))
+
+(.run client token)
