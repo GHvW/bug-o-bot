@@ -19,5 +19,5 @@
   [message]
   (setv content (. message content))
   (cond [(.startswith content "hey bug-o-bot") "uh.. hey"]
-        [(.startswith content "whoami bob") (print (. message author mention))]
+        [(.startswith content "whoami bob") (. message author mention)]
         [(.startswith content "json formatting hack") (json-md testdict)]))

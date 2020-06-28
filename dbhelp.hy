@@ -13,6 +13,7 @@
                            FOREIGN KEY (person_id) REFERENCES person (id),
                            FOREIGN KEY (media_type_id) REFERENCES media_type (id));")
 
+
 (defn create-table [sql]
   (try
     (setv conn (.connect sqlite3 db-name))
@@ -21,6 +22,20 @@
     (finally
       (.close conn))))
 
+
 (defn create-person [] (create-table create-person-sql))
+
+
 (defn create-media-type [] (create-table create-media-type-sql))
+
+
 (defn create-to-do [] (create-table create-to-do-sql))
+
+(defn add-person 
+  [id username]
+  (try
+    (setv conn (.connect sqlite3 db-name))
+    (.execute conn "INSERT INTO person (id, username) VALUES (?, ?)" (, id username))
+    (.commit conn)
+    (finally
+      (.close conn))))

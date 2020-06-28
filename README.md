@@ -1,5 +1,7 @@
 # bug-o-bot
 
+I'm still figuring all of this out
+
 ### Database Schema
 ###### person
 - id (pk)
@@ -7,10 +9,10 @@
 
 ###### media_type (lookup)
 - id 
-- name (movie, book, band, song, whatever)
+- name (ie movie, book, band, song, etc)
 
 ###### to_do
 - id
 - title
 - person_id (fk person.id)
-- media_type_id (fk media_type)
+- media_type_id (fk media_type.id)
