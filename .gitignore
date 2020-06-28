@@ -3,3 +3,4 @@ bugobot-env
 __pycache__
 *secret*
 .vscode
+temp.txt
