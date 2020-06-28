@@ -1,18 +1,16 @@
 # bug-o-bot
 
 ### Database Schema
-
-###### Person
+###### person
 - id (pk)
 - username
 
-###### MediaType (lookup)
-- movie
+###### media_type (lookup)
+- id 
+- name (movie, book, band, song, whatever)
 
-###### Movie
-- id (pk)
-- name
-
-###### PersonMovie
-- person_id (fk Person)
-- movie_id (fk Movie)
+###### to_do
+- id
+- title
+- person_id (fk person.id)
+- media_type_id (fk media_type)

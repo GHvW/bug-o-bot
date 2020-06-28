@@ -1,45 +1,26 @@
-;; py import
-(import 
-  asyncio
-  aiosqlite)
-;; hy import
+;; py imports
+(import sqlite3) ;; using this from cmd, so not worried about async etc
+;; hy imports
 (import [src.secrets [db-name]])
 
-(defn/a make-test []
-  (with/a [db (.connect aiosqlite db-name)]
-    (do
-      (await (.execute db "CREATE TABLE test(name text, username text)"))
-      (await (.execute db "INSERT INTO test VALUES ('Garrett', 'Garrett#0334')"))
-      (await (.commit db)))))
+(setv create-person-sql "CREATE TABLE person(id text PRIMARY KEY, username text);")
+(setv create-media-type-sql "CREATE TABLE media_type(id INTEGER PRIMARY KEY AUTOINCREMENT, name text NOT NULL);")
+(setv create-to-do-sql "CREATE TABLE to_do(
+                           id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                           title TEXT NOT NULL,
+                           person_id INTEGER NOT NULL,
+                           media_type_id INTEGER NOT NULL,
+                           FOREIGN KEY (person_id) REFERENCES person (id),
+                           FOREIGN KEY (media_type_id) REFERENCES media_type (id));")
 
-(defn drop-sql [name] f"DROP TABLE IF EXISTS {name}")
+(defn create-table [sql]
+  (try
+    (setv conn (.connect sqlite3 db-name))
+    (.execute conn sql)
+    (.commit conn)
+    (finally
+      (.close conn))))
 
-(defn/a delete-table
-  [name]
-  (with/a [db (.connect aiosqlite db-name)]
-    (do 
-      (await (.execute db (drop-sql name)))
-      (await (.commit db)))))
-
-(defn/a test-all
-  []
-  (with/a [db (.connect aiosqlite db-name)]
-    (with/a [cursor (.execute db "SELECT * FROM test")] 
-      (print (await (.fetchall cursor))))))
-
-(defn/a test-one
-  [name]
-  (with/a [db (.connect aiosqlite db-name)]
-    (with/a [cursor (.execute db "SELECT * FROM test WHERE name=?" (, name))] ;; (, x y z) is hy's tuple type
-      (print (await (.fetchall cursor))))))
-
-;; for testing asyncio, requires (.run asyncio (hello-world))
-(defn/a hello-world []
-  (do
-    (print "hello")
-    (await (.sleep asyncio 1))
-    (print "world")))
-
-;; to run any of these, import asyncio and (.run asyncio (fn [ARGS]))
-
-;; TODO - what's the difference between asyncio.get_event_loop() with the corresponding run to completion and asyncio.run(coro)?
+(defn create-person [] (create-table create-person-sql))
+(defn create-media-type [] (create-table create-media-type-sql))
+(defn create-to-do [] (create-table create-to-do-sql))

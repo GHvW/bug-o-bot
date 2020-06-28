@@ -12,13 +12,13 @@
 
 (defn/a all-from 
   [table]
-  (fn [conn] 
+  (fn/a [conn] 
     (with/a [cursor (.execute conn (get-all-sql table))]
       (await (.fetchall cursor)))))
 
 (defn/a one-by-id-from
   [table]
-  (fn [conn id]
+  (fn/a [conn id]
     (with/a [cursor (.execute conn (get-by-id-sql table) (, id))]
       (await (.fetchone cursor)))))
 
