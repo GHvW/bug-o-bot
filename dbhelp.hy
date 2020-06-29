@@ -39,3 +39,13 @@
     (.commit conn)
     (finally
       (.close conn))))
+
+
+(defn add-media-type
+  [name]
+  (try
+    (setv conn (.connect sqlite3 db-name))
+    (.execute conn "INSERT INTO media_type (name) VALUES (?)" (, name))
+    (.commit conn)
+    (finally
+      (.close conn))))

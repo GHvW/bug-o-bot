@@ -1,9 +1,11 @@
 (require [hy.contrib.walk [let]])
 ;; py imports
-(import discord)
+(import 
+  discord 
+  aiosqlite)
 ;; hy imports
 (import 
-  [secrets [token]]
+  [secrets [token db-name]]
   [message-handler [handler]]
   [repo [get-sqlite-conn]])
 
@@ -23,11 +25,12 @@
   (defn/a on-message 
     [message]
     (if-not (= (. message author) (. client user))
-      (let [reply (handler message)]
-        (if-not (= reply None)
-          (await (-> message
-                     (. channel)
-                     (.send reply))))))))
+      (with/a [conn (.connect aiosqlite db-name)]
+        (let [reply (await (handler message conn))]
+          (if-not (= reply None)
+            (await (-> message
+                       (. channel)
+                       (.send reply)))))))))
 
 
 (.run client token)
