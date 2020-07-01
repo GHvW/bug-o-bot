@@ -1,10 +1,12 @@
+(require [hy.contrib.walk [let]])
 ;; py imports
 (import 
   json
-  [datetime [datetime]])
+  [datetime [datetime]]
+  [random [randrange]])
 ;; hy imports
 (import
-  [repo [find-person-by-name]])
+  [repo [find-person-by-name find-user-todos-by-id]])
 
 ;; ************ FOR TESTING *******************
 (setv testdict
@@ -36,17 +38,25 @@
         [(.startswith content "whoami bob") (. message author mention)]
         [(.startswith content "json formatting hack") (json-md testdict)]
         [(.startswith content "do you have") f"I have {(await (mention-from-name (last-word content) conn))} in the database"]
-        [(>= (days-since-last-update cache (. message user id)) 1) (bug-user (. message user id))]))
+        [(>= (days-since-last-update cache (. message user id)) 1) (bug-user-message (. message user id))]))
 
 
-(defn manage-users
-  [cache conn id]
-  ()
+(defn update-user-cache
+  [cache id]
+  (do 
+    (assoc cache id (.now datetime) ;; assoc returns None instead of the dictionary
+    cahce))) 
 
 
-(defn bug-user
-  [id]
-  )
+(defn bug-user-message
+  [conn id]
+  (let [todos (await (find-user-todos-by-id conn id))]
+    (let [row (->> todos
+                   (len)
+                   (randrange 0)
+                   (get todos))]
+      f"{(format-mention id)}, have you {(media-type-verb (. row [1]))} {(. row [2])} yet?")))
+
 
 (defn bug-user-message
   [id media-type media-item]

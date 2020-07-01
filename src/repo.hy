@@ -50,11 +50,14 @@ FROM to_do t
 INNER JOIN person p
   ON t.person_id = p.id
 INNER JOIN media_type mt
-  ON t.media_type_id = mt.id")
+  ON t.media_type_id = mt.id
+WHERE id = ?")
 
 (defn/a find-user-todos-by-userid
   [conn id]
-  ())
+  (with/a [cursor (.execute conn todos-by-user-id-sql (, id))]
+    (await (.fetchone cursor))))
+
 
 ;; separate connection for transaction so no overlap https://stackoverflow.com/questions/53908615/reusing-aiosqlite-connection
 (defn/a transaction
