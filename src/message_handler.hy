@@ -26,16 +26,37 @@
 ;; extra bugs for stoping and starting are of no consequence, they should have done their todo's :)
 ;; could maybe memo the db call for the user, if it's in the dictionary, no need to go to the DB to look for the person
 
+;; user cache is something like Dict[usier-id, datetime.datetime]
+(setv user-cache {})
 
 (defn/a handler 
-  [message conn]
+  [message]
   (setv content (. message content))
   (cond [(.startswith content "hey bug-o-bot") "uh.. hey"]
         [(.startswith content "whoami bob") (. message author mention)]
         [(.startswith content "json formatting hack") (json-md testdict)]
         [(.startswith content "do you have") f"I have {(await (mention-from-name (last-word content) conn))} in the database"]
-        [(> (days-since-last-update cache (. message user id)) 1)]))
+        [(>= (days-since-last-update cache (. message user id)) 1) (bug-user (. message user id))]))
 
+
+(defn manage-users
+  [cache conn id]
+  ()
+
+
+(defn bug-user
+  [id]
+  )
+
+(defn bug-user-message
+  [id media-type media-item]
+  f"{(format-mention id)}, have you {(media-type-verb media-type)} {media-item} yet?")
+
+
+(defn media-type-verb
+  [media-type]
+  (cond [(= "movie") "watched"]
+        [(= "book") "read"]))
 
 (defn/a mention-from-name
   [name conn]
