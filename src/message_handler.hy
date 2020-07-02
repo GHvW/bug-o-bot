@@ -6,7 +6,7 @@
   [random [randrange]])
 ;; hy imports
 (import
-  [repo [find-person-by-name find-user-todos-by-id]])
+  [repo [find-person-by-name find-user-todos-by-userid]])
 
 ;; ************ FOR TESTING *******************
 (setv testdict
