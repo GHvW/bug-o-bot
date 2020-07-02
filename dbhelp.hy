@@ -15,7 +15,7 @@
 ;; AUTOINCREMENT just prevents the re-use of keys from deleted rows. shouldn't be necessary?
 
 
-(defn create-table [sql]
+(defn table-op [sql]
   (try
     (setv conn (.connect sqlite3 db-name))
     (.execute conn sql)
@@ -24,13 +24,16 @@
       (.close conn))))
 
 
-(defn create-person [] (create-table create-person-sql))
+(defn create-person [] (table-op create-person-sql))
 
 
-(defn create-media-type [] (create-table create-media-type-sql))
+(defn create-media-type [] (table-op create-media-type-sql))
 
 
-(defn create-to-do [] (create-table create-to-do-sql))
+(defn create-to-do [] (table-op create-to-do-sql))
+
+; TODO ADD DROP TABLE HELPERS
+
 
 (defn add-person 
   [id username]

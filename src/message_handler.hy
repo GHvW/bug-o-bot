@@ -51,13 +51,18 @@
                    (len)
                    (randrange 0)
                    (get todos))]
-      f"{(format-mention id)}, have you {(media-type-verb (. row [1]))} {(. row [2])} yet?")))
+      ; (print "printing todos") ; TODO REMOVE
+      ; (print todos)
+      ; (print "made it to bug user message past setting row, row is:")
+      ; (print row)
+      ; f"{(format-mention id)}, have you {(media-type-verb (. row [1]))} {(. row [2])} yet?")))
+      (.format "{0}, have you {1} {2} yet?" (format-mention id) (media-type-verb (get row 1)) (get row 2)))))
 
 
 (defn media-type-verb
   [media-type]
-  (cond [(= "movie") "watched"]
-        [(= "book") "read"]))
+  (cond [(= media-type "movie") "watched"]
+        [(= media-type "book") "read"]))
 
 
 (defn/a mention-from-name
@@ -78,6 +83,7 @@
   [user-id]
   f"<@{user-id}>")
 
+
 ;; Mention's take the format <@idnumber>
 ;; parsep-mention removes the <@ and > leaving just idnumber
 (defn parse-mention-id
@@ -91,6 +97,7 @@
   (. (- second-date first-date) days))
 
 
+; TODO CACHE NOT WORKING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 (defn time-to-bug?
   [cache id]
   (print "made it to time to bug") ; TODO REMOVE
