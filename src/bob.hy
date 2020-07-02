@@ -29,7 +29,7 @@
       (defn/a on-message 
         [message]
         (if-not (= (. message author) (. client user))
-          (let [reply (await (handler message conn))]
+          (let [reply (await (handler conn message))]
             (if-not (= reply None)
               (await (-> message
                         (. channel)

@@ -29,20 +29,24 @@
 ;; could maybe memo the db call for the user, if it's in the dictionary, no need to go to the DB to look for the person
 
 
+;; TODO
+(setv user-cache {})
+
 
 (defn/a handler 
-  [message]
+  [conn message]
   (setv content (. message content))
   (cond [(.startswith content "hey bug-o-bot") "uh.. hey"]
         [(.startswith content "whoami bob") (. message author mention)]
         [(.startswith content "json formatting hack") (json-md testdict)]
         [(.startswith content "do you have") f"I have {(await (mention-from-name (last-word content) conn))} in the database"]
-        [(time-to-bug? cache (. message user id)) (bug-user-message conn (. message user id))]))
+        [(time-to-bug? user-cache (. message author id)) (await (make-bug-user-message conn (. message author id)))]))
 
 
 (defn/a make-bug-user-message
   [conn id]
-  (let [todos (await (find-user-todos-by-id conn id))]
+  (print "made it to make bug user message") ; TODO REMOVE
+  (let [todos (await (find-user-todos-by-userid conn id))]
     (let [row (->> todos
                    (len)
                    (randrange 0)
@@ -89,12 +93,13 @@
 
 (defn time-to-bug?
   [cache id]
+  (print "made it to time to bug") ; TODO REMOVE
   (if (or 
         (= None (.get cache id))
         (< 
           (-> cache (.get id) (days-between (.now datetime)))
           1))
-    False
     (do
       (assoc cache id (.now datetime))
-      True)))
+      True)
+    False))

@@ -6,12 +6,13 @@
 (setv create-person-sql "CREATE TABLE person(id text PRIMARY KEY, username text);")
 (setv create-media-type-sql "CREATE TABLE media_type(id INTEGER PRIMARY KEY AUTOINCREMENT, name text NOT NULL);")
 (setv create-to-do-sql "CREATE TABLE to_do(
-                           id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                           id INTEGER PRIMARY KEY,
                            title TEXT NOT NULL,
                            person_id INTEGER NOT NULL,
                            media_type_id INTEGER NOT NULL,
                            FOREIGN KEY (person_id) REFERENCES person (id),
-                           FOREIGN KEY (media_type_id) REFERENCES media_type (id));")
+                           FOREIGN KEY (media_type_id) REFERENCES media_type (id));") 
+;; AUTOINCREMENT just prevents the re-use of keys from deleted rows. shouldn't be necessary?
 
 
 (defn create-table [sql]
@@ -52,9 +53,8 @@
 
 
 (setv insert-todo-sql
-"INSERT INTO to_do
+"INSERT INTO to_do (title, media_type_id, person_id)
 SELECT 
-  0,
   ? as title,
   mt.id as media_type_id,
   p.id as person_id
