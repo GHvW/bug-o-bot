@@ -28,8 +28,7 @@
 ;; extra bugs for stoping and starting are of no consequence, they should have done their todo's :)
 ;; could maybe memo the db call for the user, if it's in the dictionary, no need to go to the DB to look for the person
 
-;; user cache is something like Dict[usier-id, datetime.datetime]
-(setv user-cache {})
+
 
 (defn/a handler 
   [message]
@@ -38,17 +37,10 @@
         [(.startswith content "whoami bob") (. message author mention)]
         [(.startswith content "json formatting hack") (json-md testdict)]
         [(.startswith content "do you have") f"I have {(await (mention-from-name (last-word content) conn))} in the database"]
-        [(>= (days-since-last-update cache (. message user id)) 1) (bug-user-message (. message user id))]))
+        [(time-to-bug? cache (. message user id)) (bug-user-message conn (. message user id))]))
 
 
-(defn update-user-cache
-  [cache id]
-  (do 
-    (assoc cache id (.now datetime) ;; assoc returns None instead of the dictionary
-    cahce))) 
-
-
-(defn bug-user-message
+(defn/a make-bug-user-message
   [conn id]
   (let [todos (await (find-user-todos-by-id conn id))]
     (let [row (->> todos
@@ -58,15 +50,11 @@
       f"{(format-mention id)}, have you {(media-type-verb (. row [1]))} {(. row [2])} yet?")))
 
 
-(defn bug-user-message
-  [id media-type media-item]
-  f"{(format-mention id)}, have you {(media-type-verb media-type)} {media-item} yet?")
-
-
 (defn media-type-verb
   [media-type]
   (cond [(= "movie") "watched"]
         [(= "book") "read"]))
+
 
 (defn/a mention-from-name
   [name conn]
@@ -90,7 +78,7 @@
 ;; parsep-mention removes the <@ and > leaving just idnumber
 (defn parse-mention-id
   [mention]
-  (cut mention 2 -1)
+  (cut mention 2 -1))
 
 
 ;; usually you'll want to have first-date be the earlier date and second-date be the later date
@@ -99,8 +87,14 @@
   (. (- second-date first-date) days))
 
 
-(defn days-since-last-update
+(defn time-to-bug?
   [cache id]
-  (-> cache
-      (.get id)
-      (days-between (.now datetime))))
+  (if (or 
+        (= None (.get cache id))
+        (< 
+          (-> cache (.get id) (days-between (.now datetime)))
+          1))
+    False
+    (do
+      (assoc cache id (.now datetime))
+      True)))

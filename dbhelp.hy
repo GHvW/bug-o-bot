@@ -49,3 +49,57 @@
     (.commit conn)
     (finally
       (.close conn))))
+
+
+(setv insert-todo-sql
+"INSERT INTO to_do
+SELECT 
+  0,
+  ? as title,
+  mt.id as media_type_id,
+  p.id as person_id
+FROM person p, media_type mt
+WHERE p.username = ? AND mt.name = ?")
+
+
+(defn add-todo
+  [username media-type media-item]
+  (try
+    (setv conn (.connect sqlite3 db-name))
+    (.execute conn insert-todo-sql (, media-item username media-type))
+    (.commit conn)
+    (finally
+      (.close conn))))
+
+
+(defn all-todo
+  []
+  (try
+    (setv conn (.connect sqlite3 db-name))
+    (setv cursor (.execute conn "SELECT * FROM to_do"))
+    (.fetchall cursor)
+    (finally
+      (.close cursor)
+      (.close conn))))
+
+
+(defn all-media
+  []
+  (try
+    (setv conn (.connect sqlite3 db-name))
+    (setv cursor (.execute conn "SELECT * FROM media_type"))
+    (.fetchall cursor)
+    (finally
+      (.close cursor)
+      (.close conn))))
+
+
+(defn all-person
+  []
+  (try
+    (setv conn (.connect sqlite3 db-name))
+    (setv cursor (.execute conn "SELECT * FROM person"))
+    (.fetchall cursor)
+    (finally
+      (.close cursor)
+      (.close conn))))

@@ -41,6 +41,7 @@
   (with/a [cursor (.execute conn "SELECT * FROM person WHERE username=?" (, name))]
     (await (.fetchone cursor))))
 
+
 (setv todos-by-user-id-sql 
 "SELECT 
    p.id as person_id,
@@ -52,6 +53,7 @@ INNER JOIN person p
 INNER JOIN media_type mt
   ON t.media_type_id = mt.id
 WHERE id = ?")
+
 
 (defn/a find-user-todos-by-userid
   [conn id]

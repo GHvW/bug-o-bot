@@ -5,3 +5,4 @@ __pycache__
 .vscode
 temp.txt
 *.db
+.pytest_cache
