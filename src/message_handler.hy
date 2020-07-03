@@ -99,5 +99,6 @@
           (-> cache (.get id) (days-between (.now datetime)))
           1))
     (do
+      (assoc cache id (.now datetime))
       True)
     False))

@@ -5,7 +5,7 @@
 
 (setv create-person-sql "CREATE TABLE person(id text PRIMARY KEY, username text);")
 (setv create-media-type-sql "CREATE TABLE media_type(id INTEGER PRIMARY KEY AUTOINCREMENT, name text NOT NULL);")
-(setv create-to-do-sql "CREATE TABLE to_do(
+(setv create-todo-sql "CREATE TABLE to_do(
                            id INTEGER PRIMARY KEY,
                            title TEXT NOT NULL,
                            person_id INTEGER NOT NULL,
@@ -13,6 +13,7 @@
                            FOREIGN KEY (person_id) REFERENCES person (id),
                            FOREIGN KEY (media_type_id) REFERENCES media_type (id));") 
 ;; AUTOINCREMENT just prevents the re-use of keys from deleted rows. shouldn't be necessary?
+(setv drop-todo-sql "DROP TABLE IF EXISTS to_do;")
 
 
 (defn table-op [sql]
@@ -30,10 +31,14 @@
 (defn create-media-type [] (table-op create-media-type-sql))
 
 
-(defn create-to-do [] (table-op create-to-do-sql))
+(defn create-todo [] (table-op create-todo-sql))
+
+(defn drop-todo [] (table-op drop-todo-sql))
+
 
 ; TODO ADD DROP TABLE HELPERS
-
+; (defn drop-person [] (table-op drop-person-sql))
+; (defn drop-media-type [] (talbe-op drop-media-type-sql))
 
 (defn add-person 
   [id username]
