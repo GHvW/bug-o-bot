@@ -45,17 +45,11 @@
 
 (defn/a make-bug-user-message
   [conn id]
-  (print "made it to make bug user message") ; TODO REMOVE
   (let [todos (await (find-user-todos-by-userid conn id))]
     (let [row (->> todos
                    (len)
                    (randrange 0)
                    (get todos))]
-      ; (print "printing todos") ; TODO REMOVE
-      ; (print todos)
-      ; (print "made it to bug user message past setting row, row is:")
-      ; (print row)
-      ; f"{(format-mention id)}, have you {(media-type-verb (. row [1]))} {(. row [2])} yet?")))
       (.format "{0}, have you {1} {2} yet?" (format-mention id) (media-type-verb (get row 1)) (get row 2)))))
 
 
@@ -97,16 +91,13 @@
   (. (- second-date first-date) days))
 
 
-; TODO CACHE NOT WORKING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 (defn time-to-bug?
   [cache id]
-  (print "made it to time to bug") ; TODO REMOVE
   (if (or 
-        (= None (.get cache id))
-        (< 
+        (not (-> id (in cache)))
+        (>=
           (-> cache (.get id) (days-between (.now datetime)))
           1))
     (do
-      (assoc cache id (.now datetime))
       True)
     False))
