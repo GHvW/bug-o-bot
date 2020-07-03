@@ -2,5 +2,5 @@
 
 (import [message-handler [last-word]])
 
-(defn last-word-test []
+(defn test-last-word []
   (assert (= (last-word ["hi" "bye" "ok"]) "ok"))
