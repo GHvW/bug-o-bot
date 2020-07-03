@@ -16,3 +16,6 @@ I'm still figuring all of this out
 - title
 - person_id (fk person.id)
 - media_type_id (fk media_type.id)
+
+###### Future maybe
+- break out into separate movie, book, etc. tables with many-to-many join tables
