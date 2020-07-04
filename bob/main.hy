@@ -6,9 +6,9 @@
   aiosqlite)
 ;; hy imports
 (import 
-  [secrets [token db-name]]
-  [message-handler [handler]]
-  [repo [get-sqlite-conn]])
+  [bob.secrets [token db-name]]
+  [bob.message-handler [handler]]
+  [bob.repo [get-sqlite-conn]])
 
 
 (defn/a main []
@@ -39,4 +39,8 @@
     (await (.start client token))))
 
 
-(.run aio (main))
+; (.run aio (main))
+
+; since I forget - run with hy -m bob.main
+(defmain [&rest args]
+  (.run aio (main)))
