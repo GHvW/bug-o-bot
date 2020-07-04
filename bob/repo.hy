@@ -1,7 +1,7 @@
 ;; py imports
 (import aiosqlite)
 ;; hy imports
-(import [secrets [db-name]])
+(import [bob.secrets [db-name]])
 
 ;; TODO - consider making all of these take conn first so it can be partially applied?
 
