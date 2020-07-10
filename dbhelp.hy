@@ -1,7 +1,7 @@
 ;; py imports
 (import sqlite3) ;; using this from cmd, so not worried about async etc
 ;; hy imports
-(import [src.secrets [db-name]])
+(import [bob.secrets [db-name]])
 
 (setv create-person-sql "CREATE TABLE person(id text PRIMARY KEY, username text);")
 (setv create-media-type-sql "CREATE TABLE media_type(id INTEGER PRIMARY KEY AUTOINCREMENT, name text NOT NULL);")
