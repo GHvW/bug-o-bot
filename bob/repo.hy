@@ -25,7 +25,7 @@
 
 (defn one-by-id-from
   [table]
-  (fn/a [id conn]
+  (fn/a [conn id]
     (with/a [cursor (.execute conn (get-by-id-sql table) (, id))]
       (await (.fetchone cursor)))))
 
@@ -37,7 +37,7 @@
 
 
 (defn/a find-person-by-name
-  [name conn]
+  [conn name]
   (with/a [cursor (.execute conn "SELECT * FROM person WHERE username=?" (, name))]
     (await (.fetchone cursor))))
 
