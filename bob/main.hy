@@ -3,12 +3,14 @@
 (import 
   [asyncio :as aio]
   discord 
-  aiosqlite)
+  aiosqlite
+  [functools [partial]])
 ;; hy imports
 (import 
   [bob.secrets [token db-name]]
   [bob.message-handler [handler]]
-  [bob.repo [get-sqlite-conn]])
+  [bob.repo [get-sqlite-conn]]
+  [bob.app [app starts-with]])
 
 
 (defn/a main []
@@ -17,6 +19,8 @@
 
   (with/a [conn (.connect aiosqlite db-name)]
     ; TODO - partial apply handler here with conn
+    (setv app 
+      [(, (partial starts-with "hey bug-o-bot"), (partial text "uh.. hey"))])
 
     #@(client.event
       ;; hy should transform on-ready to on_ready()
