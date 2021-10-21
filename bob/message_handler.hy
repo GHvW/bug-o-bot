@@ -29,10 +29,13 @@
 ;; could maybe memo the db call for the user, if it's in the dictionary, no need to go to the DB to look for the person
 
 
-;; TODO
+;; TODO - is this thread un-safe in python considering asyncio? or is it like JS? asyncio has Queue's, consider using those if it becomes an issue
 (setv user-cache {})
 
 
+; TODO - maybe just make this a dictionary "route table" kind of thing in main
+; TODO - do the cond on the message, if success return text, otherwise check if time to bug, if so get the data
+; TODO - partial apply the conn?
 (defn/a handler 
   [conn message]
   (setv content (. message content))
@@ -43,14 +46,23 @@
         [(time-to-bug? user-cache (. message author id)) (await (make-bug-user-message conn (. message author id)))]))
 
 
+;(defn/a make-bug-user-message
+;  [conn id]
+;  (let [todos (await (find-user-todos-by-userid conn id))]
+;    (let [row (->> todos
+;                   (len)
+;                   (randrange 0)
+;                   (get todos))]
+;      (.format "{0}, have you {1} {2} yet?" (format-mention id) (media-type-verb (get row 1)) (get row 2)))))
+
+      
 (defn/a make-bug-user-message
-  [conn id]
-  (let [todos (await (find-user-todos-by-userid conn id))]
-    (let [row (->> todos
-                   (len)
-                   (randrange 0)
-                   (get todos))]
-      (.format "{0}, have you {1} {2} yet?" (format-mention id) (media-type-verb (get row 1)) (get row 2)))))
+  [todos]
+  (let [row (->> todos
+                 (len)
+                 (randrange 0)
+                 (get todos))]
+    (.format "{0}, have you {1} {2} yet?" (format-mention id) (media-type-verb (get row 1)) (get row 2)))))
 
 
 (defn media-type-verb
@@ -59,10 +71,17 @@
         [(= media-type "book") "read"]))
 
 
+;(defn/a mention-from-name
+;  [name conn]
+;  (-> (await (find-person-by-name name conn))
+;      (. [0]) ;; id is in the 0 position
+;      (format-mention)))
+
+
 (defn/a mention-from-name
-  [name conn]
-  (-> (await (find-person-by-name name conn))
-      (. [0]) ;; id is in the 0 position
+  [person]
+  (-> person
+      (. [0]) ; id is in the 0 position
       (format-mention)))
 
 
@@ -78,14 +97,14 @@
   f"<@{user-id}>")
 
 
-;; Mention's take the format <@idnumber>
-;; parsep-mention removes the <@ and > leaving just idnumber
+; Mention's take the format <@idnumber>
+; parsep-mention removes the <@ and > leaving just idnumber
 (defn parse-mention-id
   [mention]
   (cut mention 2 -1))
 
 
-;; usually you'll want to have first-date be the earlier date and second-date be the later date
+; usually you'll want to have first-date be the earlier date and second-date be the later date
 (defn days-between
   [first-date second-date]
   (. (- second-date first-date) days))
@@ -94,9 +113,11 @@
 (defn time-to-bug?
   [cache id]
   (if (or 
-        (not (-> id (in cache)))
+        (not ((in cache) id))
         (>=
-          (-> cache (.get id) (days-between (.now datetime)))
+          (-> cache 
+              (.get id) 
+              (days-between (.now datetime)))
           1))
     (do
       (assoc cache id (.now datetime))

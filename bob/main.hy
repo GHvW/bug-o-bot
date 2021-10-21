@@ -16,6 +16,7 @@
   (setv client (.Client discord))
 
   (with/a [conn (.connect aiosqlite db-name)]
+    ; TODO - partial apply handler here with conn
 
     #@(client.event
       ;; hy should transform on-ready to on_ready()
@@ -29,7 +30,7 @@
       (defn/a on-message 
         [message]
         (if-not (= (. message author) (. client user))
-          (let [reply (await (handler conn message))]
+          (let [reply (await (handler conn message))] ; TODO - compose here for reply, (repo  get)(stuff format)
             (if-not (= reply None)
               (await (-> message
                         (. channel)
