@@ -36,14 +36,14 @@
 ; TODO - maybe just make this a dictionary "route table" kind of thing in main
 ; TODO - do the cond on the message, if success return text, otherwise check if time to bug, if so get the data
 ; TODO - partial apply the conn?
-(defn/a handler 
-  [conn message]
-  (setv content (. message content))
-  (cond [(.startswith content "hey bug-o-bot") "uh.. hey"]
-        [(.startswith content "whoami bob") (. message author mention)]
-        [(.startswith content "json formatting hack") (json-md testdict)]
-        [(.startswith content "do you have") f"I have {(await (mention-from-name (last-word content) conn))} in the database"]
-        [(time-to-bug? user-cache (. message author id)) (await (make-bug-user-message conn (. message author id)))]))
+;(defn/a handler 
+;  [conn message]
+;  (setv content (. message content))
+;  (cond [(.startswith content "hey bug-o-bot") "uh.. hey"]
+;        [(.startswith content "whoami bob") (. message author mention)]
+;        [(.startswith content "json formatting hack") (json-md testdict)]
+;        [(.startswith content "do you have") f"I have {(await (mention-from-name (last-word content) conn))} in the database"]
+;        [(time-to-bug? user-cache (. message author id)) (await (make-bug-user-message conn (. message author id)))]))
 
 
 ;(defn/a make-bug-user-message
